@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.LinearLayout;
@@ -28,6 +29,7 @@ public class FabMenu extends LinearLayout {
     private OnItemClick onItemClickListener;
     private boolean isOpen = false;
     private int count = 0;
+    private float shadow;
 
     public FabMenu(Context context) {
         this(context, null);
@@ -93,6 +95,9 @@ public class FabMenu extends LinearLayout {
         rootFab.setImageDrawable(rootSrc);
 
         addView(rootFab);
+
+        shadow = rootFab.getElevation();
+        Log.i("TAG",""+shadow);
     }
 
     private void initAttr(Context context, AttributeSet attrs) {
@@ -124,6 +129,9 @@ public class FabMenu extends LinearLayout {
         }
 
         desireHeight += (int) (count * childMargin);
+        desireHeight += shadow;
+
+        desireWidth += 2*shadow;
         setMeasuredDimension(resolveSize(desireWidth, widthMeasureSpec), resolveSize(desireHeight, heightMeasureSpec));
     }
 
@@ -146,10 +154,10 @@ public class FabMenu extends LinearLayout {
             int width = child.getMeasuredWidth();
             int height = child.getMeasuredWidth();
 
-            int l = 0;
-            int t = (int) (getMeasuredHeight() - height * (i + 2) - childMargin * (i + 1));
-            int b = (int) (getMeasuredHeight() - height * (i + 1) - childMargin * (i + 1));
-            int r = getMeasuredWidth();
+            int l = (int) (0+shadow);
+            int t = (int) (getMeasuredHeight() - height * (i + 2) - childMargin * (i + 1)-shadow);
+            int b = (int) (getMeasuredHeight() - height * (i + 1) - childMargin * (i + 1)-shadow);
+            int r = (int) (getMeasuredWidth()-shadow);
 
             child.layout(l, t, r, b);
         }
@@ -170,10 +178,10 @@ public class FabMenu extends LinearLayout {
         int width = rootFab.getMeasuredWidth();
         int height = rootFab.getMeasuredWidth();
 
-        int l = 0;
-        int t = getMeasuredHeight() - height;
-        int b = getMeasuredHeight();
-        int r = getMeasuredWidth();
+        int l = (int) (0+shadow);
+        int t = (int) (getMeasuredHeight() - height - shadow);
+        int b = (int) (getMeasuredHeight()-shadow);
+        int r = (int) (getMeasuredWidth()-shadow);
 
         rootFab.layout(l, t, r, b);
     }

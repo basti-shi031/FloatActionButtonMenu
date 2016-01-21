@@ -16,7 +16,6 @@
         android:layout_marginRight="16dp"
         app:root_background_tint="@color/colorAccent"
         app:root_src="@mipmap/ic_add_white_36dp">
-
     </com.basti.floatingactionbuttonmenu.FabMenu>
 
 </RelativeLayout>
