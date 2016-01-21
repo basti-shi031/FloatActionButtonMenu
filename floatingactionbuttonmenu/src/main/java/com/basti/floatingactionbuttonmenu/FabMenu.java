@@ -10,13 +10,9 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.LinearLayout;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by SHIBW-PC on 2016/1/19.
@@ -50,7 +46,7 @@ public class FabMenu extends LinearLayout {
     //以下为外部调用方法
     //==============
 
-    public void setOnItemClick(OnItemClick onItemClickListener){
+    public void setOnItemClick(OnItemClick onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
@@ -60,7 +56,7 @@ public class FabMenu extends LinearLayout {
         FloatingActionButton floatingActionButton = new FloatingActionButton(getContext());
         floatingActionButton.setBackgroundTintList(childBackground);
         floatingActionButton.setRippleColor(rootRippleColor);
-        floatingActionButton.setImageDrawable(rootSrc);
+        floatingActionButton.setImageDrawable(childRootSrc);
         floatingActionButton.setVisibility(GONE);
 
         floatingActionButton.setOnClickListener(new OnClickListener() {
@@ -73,11 +69,10 @@ public class FabMenu extends LinearLayout {
         });
 
         addView(floatingActionButton);
-        count ++;
+        count++;
 
         //childFabs.add(floatingActionButton);
     }
-
 
     //==============
     //以下为内部调用方法
@@ -93,7 +88,6 @@ public class FabMenu extends LinearLayout {
 
     private void initRootFab() {
         rootFab = new FloatingActionButton(getContext());
-        //rootFab.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#303030")));
         rootFab.setBackgroundTintList(rootBackgroundTint);
         rootFab.setRippleColor(rootRippleColor);
         rootFab.setImageDrawable(rootSrc);
@@ -105,9 +99,9 @@ public class FabMenu extends LinearLayout {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.FabMenu);
 
         rootBackgroundTint = ta.getColorStateList(R.styleable.FabMenu_root_background_tint);
-        rootRippleColor = ta.getColor(R.styleable.FabMenu_root_ripple, 0);
+        rootRippleColor = ta.getColor(R.styleable.FabMenu_root_ripple, Color.parseColor("#33728dff"));
         rootSrc = ta.getDrawable(R.styleable.FabMenu_root_src);
-        childMargin = ta.getDimension(R.styleable.FabMenu_item_margin, Utils.dp2px(getContext(),16));
+        childMargin = ta.getDimension(R.styleable.FabMenu_item_margin, Utils.dp2px(getContext(), 16));
 
         ta.recycle();
     }
@@ -119,10 +113,10 @@ public class FabMenu extends LinearLayout {
         int desireHeight = 0;
         int desireWidth = 0;
 
-        for(int i = 0;i < count;i++){
+        for (int i = 0; i < count; i++) {
 
             FloatingActionButton childView = (FloatingActionButton) getChildAt(i);
-            measureChild(childView,widthMeasureSpec,heightMeasureSpec);
+            measureChild(childView, widthMeasureSpec, heightMeasureSpec);
 
             desireHeight = desireHeight + childView.getMeasuredHeight();
             desireWidth = childView.getMeasuredWidth();
@@ -135,7 +129,7 @@ public class FabMenu extends LinearLayout {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        if (changed){
+        if (changed) {
             //定位主按钮
             layoutRootFab();
 
@@ -145,16 +139,16 @@ public class FabMenu extends LinearLayout {
     }
 
     private void layoutChildeFab() {
-        int childCount = getChildCount()-1;
-        for(int i = 0;i<childCount;i++){
-            FloatingActionButton child = (FloatingActionButton) getChildAt(i+1);
+        int childCount = getChildCount() - 1;
+        for (int i = 0; i < childCount; i++) {
+            FloatingActionButton child = (FloatingActionButton) getChildAt(i + 1);
 
             int width = child.getMeasuredWidth();
             int height = child.getMeasuredWidth();
 
             int l = 0;
-            int t = (int) (getMeasuredHeight()-height*(i+2)-childMargin*(i+1));
-            int b = (int) (getMeasuredHeight() - height*(i+1)-childMargin*(i+1));
+            int t = (int) (getMeasuredHeight() - height * (i + 2) - childMargin * (i + 1));
+            int b = (int) (getMeasuredHeight() - height * (i + 1) - childMargin * (i + 1));
             int r = getMeasuredWidth();
 
             child.layout(l, t, r, b);
@@ -165,11 +159,10 @@ public class FabMenu extends LinearLayout {
         rootFab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (onItemClickListener != null){
+                if (onItemClickListener != null) {
                     onItemClickListener.onRootFabClick();
                     isOpen = !isOpen;
                     operateChildView(isOpen);
-                    Log.i("Tag","click");
                 }
             }
         });
@@ -178,37 +171,41 @@ public class FabMenu extends LinearLayout {
         int height = rootFab.getMeasuredWidth();
 
         int l = 0;
-        int t = getMeasuredHeight()-height;
+        int t = getMeasuredHeight() - height;
         int b = getMeasuredHeight();
         int r = getMeasuredWidth();
 
-        rootFab.layout(l,t,r,b);
+        rootFab.layout(l, t, r, b);
     }
 
 
     private void operateChildView(boolean isOpen) {
-        if (isOpen){
+        int childCount = getChildCount();
+        int offset = 150 / childCount;
+        if (isOpen) {
             //打开
-            Log.i("TAG","打开");
-
-            int childCount = getChildCount();
-            for (int i = 0;i< childCount-1;i++){
-                FloatingActionButton childView = (FloatingActionButton) getChildAt(i+1);
+            for (int i = 0; i < childCount - 1; i++) {
+                final FloatingActionButton childView = (FloatingActionButton) getChildAt(i + 1);
                 ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(childView, "Y", getMeasuredHeight() - childView.getMeasuredHeight(),
                         (getMeasuredHeight() - childView.getMeasuredHeight() * (i + 2) - childMargin * (i + 1)));
-                objectAnimator.setDuration(150).setInterpolator(new AccelerateInterpolator());
+                objectAnimator.setDuration(150).setStartDelay(offset * i);
+                objectAnimator.setInterpolator(new AccelerateInterpolator());
+                objectAnimator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        childView.setVisibility(VISIBLE);
+                    }
+                });
                 objectAnimator.start();
-                childView.setVisibility(VISIBLE);
             }
-        }else {
+        } else {
             //关闭
-            Log.i("TAG","关闭");
-            int childCount = getChildCount();
-            for (int i = 0;i< childCount-1;i++){
-                final FloatingActionButton childView = (FloatingActionButton) getChildAt(i+1);
+            for (int i = 0; i < childCount - 1; i++) {
+                final FloatingActionButton childView = (FloatingActionButton) getChildAt(i + 1);
 
                 ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(childView, "Y", childView.getY(), getMeasuredHeight() - childView.getMeasuredHeight());
-                objectAnimator.setDuration(150).setInterpolator(new AccelerateInterpolator());
+                objectAnimator.setDuration(150).setStartDelay(offset * (childCount - i));
+                objectAnimator.setInterpolator(new AccelerateInterpolator());
                 objectAnimator.start();
                 objectAnimator.addListener(new AnimatorListenerAdapter() {
                     @Override

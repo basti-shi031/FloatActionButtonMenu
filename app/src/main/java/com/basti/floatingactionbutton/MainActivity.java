@@ -13,7 +13,6 @@ import com.basti.floatingactionbuttonmenu.OnItemClick;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FloatingActionButton mFab;
     private FabMenu mFabMenu;
 
     @Override
@@ -21,12 +20,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFabMenu = (FabMenu) findViewById(R.id.fabMenu);
 
-        mFabMenu.addFab(ColorStateList.valueOf(Color.RED),null);
-        mFabMenu.addFab(ColorStateList.valueOf(Color.GREEN),null);
-        mFabMenu.addFab(ColorStateList.valueOf(Color.BLUE),null);
+        mFabMenu.addFab(ColorStateList.valueOf(Color.RED),getResources().getDrawable(R.mipmap.ic_create_white_36dp));
+        mFabMenu.addFab(ColorStateList.valueOf(Color.GREEN),getResources().getDrawable(R.mipmap.ic_drafts_white_36dp));
+        mFabMenu.addFab(ColorStateList.valueOf(Color.BLUE),getResources().getDrawable(R.mipmap.ic_send_white_36dp));
         mFabMenu.setOnItemClick(new OnItemClick() {
             @Override
             public void onRootFabClick() {
@@ -36,13 +34,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChildFabChild(int index) {
                 Toast.makeText(getApplicationContext(), "点击了第" + index + "个子按钮", Toast.LENGTH_SHORT).show();
-            }
-        });
-        //mFab.setRippleColor();
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
             }
         });
     }
